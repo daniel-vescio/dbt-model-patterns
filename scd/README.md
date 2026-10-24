@@ -10,12 +10,12 @@ Patterns for keeping history (SCD type 2): every version of a record, with the p
 | No reliable `updated_at` | [Snapshot: check](snapshot-check/) |
 | A CDC stream | [CDC: SCD2](../cdc/scd2-from-cdc/) |
 
-If you have CDC, use it. Snapshots only see what's there when they run, so changes between runs collapse into one.
+If you have CDC, use it. Snapshots only see what's there when they run, so multiple changes between runs are recorded as one.
 
 ## Things that apply to all of them
 
-- **Snapshots can't be rebuilt.** History that wasn't captured is gone, and dropping or moving the table loses what was. Back it up before changing anything structural.
-- **`unique_key` must really be unique in the source.** Duplicate keys corrupt the history for good. Put a `unique` test on the source column.
+- **Snapshots can't be rebuilt.** History that wasn't captured is gone, and dropping or moving the table loses what was captured. Back it up before changing anything structural.
+- **`unique_key` must be unique in the source.** Duplicate keys corrupt the history permanently. Put a `unique` test on the source column.
 - **Read history through a model** with friendly names and a `valid_to` that's never null, rather than pointing people at the snapshot table.
 - **Join facts with `>= valid_from and < valid_to`** so each timestamp matches exactly one version.
 - **History starts when capture started.** The first version's `valid_from` is the first snapshot run (or the first CDC event), so facts older than that match no version. If the first version should cover everything before it, set its `valid_from` to `'1900-01-01'` in the history model.

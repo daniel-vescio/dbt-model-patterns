@@ -4,7 +4,7 @@ Decide how rows deleted at the source should look downstream.
 
 ## Problem
 
-A delete arrives as a `d` event, and you have to choose what to do with it. Remove the row and old reports break (facts pointing at customers that no longer exist). Ignore it and deleted records look live.
+A delete arrives as a `d` event, and you have to choose what to do with it. If you remove the row, old reports break (facts pointing at customers that no longer exist). If you ignore it, deleted records look active.
 
 ## Options
 
@@ -12,7 +12,7 @@ A delete arrives as a `d` event, and you have to choose what to do with it. Remo
 |---|---|---|
 | **Soft delete** (template) | Kept, with `is_deleted` and `deleted_at` | The default. Facts still join, and you can report on deletions |
 | **Hard delete** | Removed | Privacy or legal reasons, e.g. a right-to-erasure request |
-| **Ignore** | Kept, looks live | Rarely. Only if the source deletes rows for housekeeping |
+| **Ignore** | Kept, looks active | Rarely. Only if the source deletes rows for housekeeping |
 
 ## Use when
 
@@ -20,7 +20,7 @@ Your CDC source sends deletes and you're building current state incrementally.
 
 ## Don't use when
 
-You're rebuilding from the full log each run and just want deleted rows gone. [Latest state](../latest-state/) already does that.
+You're rebuilding from the full log each run and want deleted rows removed. [Latest state](../latest-state/) already does that.
 
 ## Decisions
 

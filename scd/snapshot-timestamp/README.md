@@ -19,16 +19,16 @@ You need history, and the source has an `updated_at` that changes on **every** u
 ## Decisions
 
 - **Snapshot the source, not a staging model.** You can't rebuild history later, so capture the raw data and transform it downstream.
-- **`hard_deletes`:** what happens when a row disappears from the source. `ignore` (default) keeps it current forever. `invalidate` closes it off. `new_record` adds a version flagged as deleted. `invalidate` is a good default.
+- **`hard_deletes`:** what happens when a row disappears from the source. `ignore` (default) keeps it current forever. `invalidate` closes the current version. `new_record` adds a version flagged as deleted. `invalidate` is a good default.
 - **`dbt_valid_to_current`:** puts a far-future date on current rows instead of null, which makes date-range joins simpler. Optional. Adding it to an existing snapshot doesn't backfill: rows that are already current keep null. `dim_customers_history.sql` handles both.
 - **Read it through a model** like `dim_customers_history.sql` with friendlier names, rather than pointing people at the snapshot table.
 
 ## Gotchas
 
 - Snapshots only see what's there when they run. Two updates between runs show up as one.
-- You can't get history back. Back up the table before renaming it or moving it to another schema.
+- Lost history can't be recovered. Back up the table before renaming it or moving it to another schema.
 - If the source ever backdates `updated_at`, changes get missed.
-- `unique_key` must really be unique in the source. Duplicates corrupt the history for good, so put a `unique` test on the source column.
+- `unique_key` must be unique in the source. Duplicates corrupt the history permanently, so put a `unique` test on the source column.
 
 ## Files
 

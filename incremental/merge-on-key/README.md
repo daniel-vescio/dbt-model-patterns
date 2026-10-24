@@ -8,7 +8,7 @@ Records change after they're created. An order goes from `placed` to `shipped` t
 
 ## Use when
 
-Rows are updated in place, you only need the latest version, and the table is big enough that a full rebuild hurts.
+Rows are updated in place, you only need the latest version, and the table is big enough that a full rebuild is too slow.
 
 ## Don't use when
 
@@ -19,13 +19,13 @@ Rows are updated in place, you only need the latest version, and the table is bi
 ## Decisions
 
 - **Key:** the column (or list of columns) that identifies a row, e.g. `unique_key='order_id'`.
-- **Strategy:** `merge` updates matching rows and inserts the rest. It needs Postgres 15+. On older versions use `delete+insert`, which deletes matching keys and inserts the batch. If you set a `unique_key` without a strategy, Postgres gives you `delete+insert`.
-- **Filter on `_loaded_at`.** It picks up everything that landed since the last run. Filtering on the source's `updated_at` assumes changes always arrive in order, and they often don't.
+- **Strategy:** `merge` updates matching rows and inserts the rest. It needs Postgres 15+. On older versions use `delete+insert`, which deletes matching keys and inserts the batch. If you set a `unique_key` without a strategy, dbt-postgres uses `delete+insert`.
+- **Filter on `_loaded_at`.** It picks up everything loaded since the last run. Filtering on the source's `updated_at` assumes changes always arrive in order, and they often don't.
 
 ## Gotchas
 
-- **One row per key per batch.** If a batch has two versions of the same order, `merge` either errors ("cannot affect row a second time") or inserts both. The template keeps the latest `updated_at` in each batch. If the source is full of duplicates, deduplicate upstream instead (see [deduplication](../../deduplication/)).
-- **An older version that lands after a newer one overwrites it.** Merge applies whatever arrives last. If that can happen, add the second guard from [out-of-order events](../../cdc/out-of-order-events/).
+- **One row per key per batch.** If a batch has two versions of the same order, `merge` either errors ("cannot affect row a second time") or inserts both. The template keeps the latest `updated_at` in each batch. If the source has a lot of duplicates, deduplicate upstream instead (see [deduplication](../../deduplication/)).
+- **An older version loaded after a newer one overwrites it.** Merge applies whatever arrives last. If that can happen, add the second guard from [out-of-order events](../../cdc/out-of-order-events/).
 - **Null keys never match**, so those rows get inserted as new. Test the key with `not_null`.
 - **Rows deleted at the source stay here.** Merge only sees rows that arrive. If deletes matter, use a CDC feed or rebuild periodically.
 

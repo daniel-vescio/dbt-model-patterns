@@ -4,10 +4,10 @@ Keep current state up to date incrementally, without late or duplicate events ov
 
 ## Problem
 
-An incremental CDC model only processes events that landed since the last run. Two things trip up a naive version:
+An incremental CDC model only processes events loaded since the last run. Two things break a simple version:
 
 1. **Several changes to one key in the same batch.** Without picking one, `merge` errors or inserts duplicates.
-2. **An older change lands after a newer one was applied.** Retries and parallel loaders make this more common than you'd think. A naive merge applies whatever arrives last, so the row quietly goes back to an older version.
+2. **An older change arrives after a newer one was applied.** Retries and parallel loaders make this common. A simple merge applies whatever arrives last, so the row reverts to an older version without any error.
 
 ## Use when
 
@@ -15,7 +15,7 @@ You need current state from a CDC stream, rebuilding from the full log ([latest 
 
 ## Don't use when
 
-- The full rebuild is fast enough. [Latest state](../latest-state/) is simpler and can't drift.
+- The full rebuild is fast enough. [Latest state](../latest-state/) is simpler and can't get out of sync.
 - You need history. Use [SCD2](../scd2-from-cdc/).
 
 ## Decisions
@@ -30,7 +30,7 @@ You need current state from a CDC stream, rebuilding from the full log ([latest 
 ## Gotchas
 
 - If `_source_lsn` ever resets (database restore, failover, connector rebuilt), new events look older and get skipped. Run a `--full-refresh` after anything like that.
-- Incremental models can drift over time. Compare against [latest state](../latest-state/) now and then, or schedule a periodic full refresh.
+- Incremental models can get out of sync over time. Compare against [latest state](../latest-state/) periodically, or schedule a regular full refresh.
 
 ## Files
 

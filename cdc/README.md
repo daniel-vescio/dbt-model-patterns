@@ -24,7 +24,7 @@ The patterns read from a staging model (`stg_cdc__customer_changes.sql`) with on
 | `_op` | `c` create, `u` update, `d` delete, `r` initial snapshot |
 | `_source_lsn` | Position in the source database's log. Use it to order events |
 | `_source_ts` | When the change was committed at the source |
-| `_loaded_at` | When the event landed in the warehouse. Use it for incremental filters |
+| `_loaded_at` | When the event was loaded into the warehouse. Use it for incremental filters |
 
 The staging template maps Debezium's fields to these names. Other tools call them something different, but the ideas are the same.
 
@@ -33,6 +33,6 @@ The staging template maps Debezium's fields to these names. Other tools call the
 ## Things that apply to all of them
 
 - **Order by log position, not timestamp.** Two changes can share a timestamp. The log position (LSN, binlog position, SCN) gives the real order.
-- **Filter incrementally on `_loaded_at`.** It catches every event that arrived since the last run, however old.
+- **Filter incrementally on `_loaded_at`.** It picks up every event loaded since the last run, whatever its source timestamp.
 - **Pick the latest event first, then check for deletes.** Filtering out deletes first brings deleted rows back with their previous values.
-- **Expect duplicates.** Most pipelines deliver at least once.
+- **Expect duplicates.** Most pipelines deliver each event at least once, so some arrive twice.

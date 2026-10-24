@@ -4,14 +4,14 @@ Rebuild the current state of each row from the full change log, every run.
 
 ## Problem
 
-A change stream tells you what happened, not what exists now. To get "what does this customer look like today", you need the latest event per key, minus anything whose latest event was a delete.
+A change stream tells you what happened, not what exists now. To get "what does this customer look like today", you need the latest event per key, excluding keys whose latest event was a delete.
 
 ## Use when
 
 - You need current state from a CDC stream.
 - Scanning the whole change log each run is quick enough.
 
-It's the simplest version that's always right: every run starts fresh, so late or out-of-order events can't build up into problems.
+It's the simplest version that's always right: every run starts from scratch, so late or out-of-order events can't accumulate into errors.
 
 ## Don't use when
 
@@ -22,7 +22,7 @@ It's the simplest version that's always right: every run starts fresh, so late o
 
 - **Order by `_source_lsn`.**
 - **Rank first, then drop deletes.** Doing it the other way round brings deleted customers back.
-- **Deleted rows just disappear.** If downstream needs to know about deletes, see [deletes](../deletes/).
+- **Deleted rows are left out.** If downstream needs to know about deletes, see [deletes](../deletes/).
 - **Table, not view.** A view would rescan the log on every query.
 
 ## Gotchas

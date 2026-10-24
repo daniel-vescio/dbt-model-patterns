@@ -4,7 +4,7 @@ Let dbt split an incremental model into time batches (hour, day, month or year) 
 
 ## Problem
 
-Hand-written incremental filters get fiddly on big time-series tables: lookback windows, backfilling a date range, retrying one failed day. Microbatch moves all of that into config.
+Hand-written incremental filters get complicated on big time-series tables: lookback windows, backfilling a date range, retrying one failed day. Microbatch moves all of that into config.
 
 ## Use when
 
@@ -23,7 +23,7 @@ Hand-written incremental filters get fiddly on big time-series tables: lookback 
 - **`batch_size`:** daily suits most cases.
 - **`lookback`:** how many previous batches to redo each run, for late data. Defaults to 1.
 - **`begin`:** where the first build starts from.
-- **Postgres needs a `unique_key`.** dbt-postgres uses `merge` under the hood, so you also need Postgres 15+.
+- **Postgres needs a `unique_key`.** dbt-postgres uses `merge` internally, so you also need Postgres 15+.
 
 ## Running it
 
@@ -35,9 +35,9 @@ dbt retry                                          # rerun only the failed batch
 
 ## Gotchas
 
-- If an upstream model has no `event_time`, every batch reads the whole thing. Still correct, just slow.
+- If an upstream model has no `event_time`, every batch reads the whole table. The results are still correct, but slower.
 - Don't add your own `is_incremental()` filter. dbt already filters each batch.
-- Batches are in UTC, so a batch "day" won't line up with a Melbourne day.
+- Batches are in UTC, so a batch "day" won't match a Melbourne calendar day.
 
 ## Files
 
