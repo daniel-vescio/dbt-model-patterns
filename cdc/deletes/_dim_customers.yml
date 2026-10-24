@@ -1,0 +1,8 @@
+models:
+  - name: dim_customers
+    description: Current state of each customer from CDC. Deleted customers are kept with is_deleted = true.
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null

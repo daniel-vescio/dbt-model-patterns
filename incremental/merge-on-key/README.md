@@ -24,7 +24,8 @@ Rows are updated in place, you only need the latest version, and the table is bi
 
 ## Gotchas
 
-- **One row per key per batch.** If a batch has two versions of the same order, `merge` either errors ("cannot affect row a second time") or inserts both. Deduplicate first (see [deduplication](../../deduplication/)).
+- **One row per key per batch.** If a batch has two versions of the same order, `merge` either errors ("cannot affect row a second time") or inserts both. The template keeps the latest `updated_at` in each batch. If the source is full of duplicates, deduplicate upstream instead (see [deduplication](../../deduplication/)).
+- **An older version that lands after a newer one overwrites it.** Merge applies whatever arrives last. If that can happen, add the second guard from [out-of-order events](../../cdc/out-of-order-events/).
 - **Null keys never match**, so those rows get inserted as new. Test the key with `not_null`.
 - **Rows deleted at the source stay here.** Merge only sees rows that arrive. If deletes matter, use a CDC feed or rebuild periodically.
 

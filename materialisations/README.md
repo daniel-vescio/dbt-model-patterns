@@ -26,7 +26,8 @@ Get it wrong and you either rebuild a huge table every run for no reason, or add
 ## Decisions
 
 - **Set defaults per folder** in `dbt_project.yml` (see the snippet here), so most models need no config.
-- **`full_refresh: false`** on big incremental tables stops an accidental `--full-refresh` from rebuilding them.
+- **Set `on_schema_change` for incremental models.** The default, `ignore`, quietly leaves out any column you add to the model. `append_new_columns` (in the snippet) adds it, with nulls in rows already loaded until a full refresh. `fail` stops the run so you can decide.
+- **`full_refresh: false`** on big incremental tables stops an accidental `--full-refresh` from rebuilding them. It also blocks the deliberate ones some patterns rely on, so take it off for that run.
 
 ## Gotchas
 

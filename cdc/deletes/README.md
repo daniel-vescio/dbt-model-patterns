@@ -37,3 +37,4 @@ You're rebuilding from the full log each run and just want deleted rows gone. [L
 ## Files
 
 - `dim_customers.sql`: the model
+- `_dim_customers.yml`: tests

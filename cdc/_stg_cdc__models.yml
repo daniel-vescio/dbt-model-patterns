@@ -1,0 +1,18 @@
+models:
+  - name: stg_cdc__customer_changes
+    description: One row per change event. Can include duplicate deliveries of the same event.
+    columns:
+      - name: customer_id
+        data_tests:
+          - not_null
+      - name: _op
+        description: The patterns treat anything that isn't d as a live row, so an unexpected value should fail here first.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["c", "u", "d", "r"]
+      - name: _source_lsn
+        description: Every pattern orders by this.
+        data_tests:
+          - not_null

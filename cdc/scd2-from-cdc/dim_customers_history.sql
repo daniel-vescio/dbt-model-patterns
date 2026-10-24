@@ -9,6 +9,8 @@
 -- One row per version of each customer, built from change events.
 -- Each run rebuilds the full history of customers with new events, and delete+insert on
 -- customer_id swaps it in, so late and out-of-order events land in the right place.
+-- unique_key here is the key delete+insert replaces on, not a unique column: each customer
+-- has many rows. (It wouldn't work with merge.)
 -- replace: model, key and column names
 
 with changes as (
@@ -20,7 +22,10 @@ changed_customers as (
     select distinct changes.customer_id
     from changes
     {% if is_incremental() %}
-        where changes._loaded_at > (select max(hist._loaded_at) from {{ this }} as hist)
+        -- coalesce: on an empty table max() is null, and nothing would ever load
+        where changes._loaded_at > (
+            select coalesce(max(hist._loaded_at), '1900-01-01') from {{ this }} as hist
+        )
     {% endif %}
 ),
 

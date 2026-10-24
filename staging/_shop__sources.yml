@@ -8,8 +8,3 @@ sources:
         error_after: {count: 24, period: hour}
     tables:
       - name: payments
-        columns:
-          - name: id
-            data_tests:
-              - unique
-              - not_null

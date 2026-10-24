@@ -25,7 +25,7 @@ You need current state from a CDC stream, rebuilding from the full log ([latest 
   2. Only apply it if it's newer than what's already in the table (`_source_lsn > loaded._source_lsn`).
 - **Store `_source_lsn` on every row**, since guard 2 compares against it.
 - **Deletes go through the same guards**, so a late update can't bring a deleted customer back.
-- **The unit tests in `_dim_customers.yml` cover both guards.** With `is_incremental` overridden, the expected rows are what the model returns for the batch, not the final table.
+- **The unit tests in `_dim_customers.yml` cover both guards**, plus a late update arriving after a delete. With `is_incremental` overridden, the expected rows are what the model returns for the batch, not the final table.
 
 ## Gotchas
 

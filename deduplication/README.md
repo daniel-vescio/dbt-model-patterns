@@ -25,8 +25,8 @@ A source has more than one row per key, and a test has confirmed it (not just a 
 ## Decisions
 
 - **Dedupe once, early.** One model right after staging that everything else uses. Deduping in some places and not others gives you different numbers in different reports.
-- **Make it deterministic.** Order by your rule, then add tie-breakers (`_loaded_at`, then a unique column if you have one) until one row always wins. Otherwise the result can change between runs.
-- **Keep an eye on how many you're dropping.** A `unique` test on the staging model with `severity: warn` shows you duplicates arriving without failing the run.
+- **Make it deterministic.** Order by your rule, then add tie-breakers (`_loaded_at`, then a unique column if you have one, or a hash of the whole row as a last resort) until one row always wins. Otherwise the result can change between runs.
+- **Keep an eye on how many you're dropping.** A `unique` test on the staging model with `severity: warn` shows you duplicates arriving without failing the run. The [staging example](../staging/_stg_shop__models.yml) does this.
 - On Postgres, `distinct on (payment_id) ... order by payment_id, updated_at desc` does the same thing in one go. `row_number()` works everywhere.
 
 ## Gotchas

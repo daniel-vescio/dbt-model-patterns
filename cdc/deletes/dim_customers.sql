@@ -14,7 +14,10 @@
 with changes as (
     select * from {{ ref('stg_cdc__customer_changes') }}
     {% if is_incremental() %}
-        where _loaded_at > (select max(dim._loaded_at) from {{ this }} as dim)
+        -- coalesce: on an empty table max() is null, and nothing would ever load
+        where _loaded_at > (
+            select coalesce(max(dim._loaded_at), '1900-01-01') from {{ this }} as dim
+        )
     {% endif %}
 ),
 

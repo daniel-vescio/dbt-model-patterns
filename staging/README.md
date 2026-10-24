@@ -20,6 +20,7 @@ Any source table dbt reads gets exactly one staging model.
 - **Naming:** `stg_<source>__<table>`, e.g. `stg_shop__payments`.
 - **What belongs here:** renames, casts, unit conversions (cents to dollars), fixing case, simple flags. Nothing that changes the row count.
 - **Column names:** `_id` for keys, `_at` for timestamps, `_on` for dates, `is_`/`has_` for booleans.
+- **Nested data:** keep the raw field and pull out the values you need. If it holds repeated records (like line items), unnest them into their own staging model, e.g. `stg_shop__order_items`. It's the one place staging changes the row count, so give it its own key and tests.
 - **Views.** Cheap and always up to date.
 - **Only staging uses `source()`.** Everything else uses `ref()`.
 
@@ -28,6 +29,8 @@ Any source table dbt reads gets exactly one staging model.
 - List columns explicitly in the final select, so new upstream columns don't sneak through.
 - Don't quietly filter rows here. If you must, comment why.
 - Set freshness on the source so a stale load fails loudly instead of showing old numbers.
+- Be explicit about time zones. Casting a timestamp without a time zone to `timestamptz` reads it in the session's time zone, so the same row can come out differently depending on who runs it.
+- Dividing by 100 assumes every currency has two decimal places. JPY has none and KWD has three, so with mixed currencies divide by each currency's minor unit.
 
 ## Files
 

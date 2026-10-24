@@ -20,6 +20,6 @@ select
     user_id,
     page_path,
     occurred_at,
-    occurred_at::date as event_date
+    (occurred_at at time zone 'UTC')::date as event_date  -- UTC, to match the batches
 from {{ ref('stg_app__events') }}
 where event_name = 'page_view'

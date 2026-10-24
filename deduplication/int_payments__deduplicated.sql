@@ -1,4 +1,4 @@
--- One row per payment. Latest version wins, with a tie-breaker so it's the same row every run.
+-- One row per payment. Latest version wins, with tie-breakers so it's the same row every run.
 -- replace: model, key and ordering columns
 
 with payments as (
@@ -12,7 +12,8 @@ ranked as (
             partition by payment_id
             order by
                 updated_at desc nulls last,  -- the rule: latest version
-                _loaded_at desc               -- tie-breaker: most recently loaded copy
+                _loaded_at desc,              -- tie-breaker: most recently loaded copy
+                md5(payments::text)           -- last resort: a hash of the whole row
         ) as row_num
     from payments
 ),

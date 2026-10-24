@@ -41,3 +41,18 @@ unit_tests:
           - {customer_id: 1, customer_tier: premium, _source_lsn: 100, _loaded_at: "2026-01-02 09:00:00"}
     expect:
       rows: []
+
+  - name: dim_customers_late_update_does_not_undelete
+    model: dim_customers
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: ref('stg_cdc__customer_changes')
+        rows:
+          - {customer_id: 3, customer_tier: premium, _op: u, _source_lsn: 190, _loaded_at: "2026-01-02 10:00:00"}
+      - input: this
+        rows:
+          - {customer_id: 3, customer_tier: standard, is_deleted: true, _source_lsn: 200, _loaded_at: "2026-01-02 09:00:00"}
+    expect:
+      rows: []

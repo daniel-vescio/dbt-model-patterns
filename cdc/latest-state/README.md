@@ -33,3 +33,4 @@ It's the simplest version that's always right: every run starts fresh, so late o
 ## Files
 
 - `dim_customers.sql`: the model
+- `_dim_customers.yml`: tests

@@ -12,8 +12,11 @@ with events as (
         _loaded_at
     from {{ ref('stg_app__events') }}
     {% if is_incremental() %}
-        -- Load time, not event time: yesterday's event that landed today is still new
-        where _loaded_at > (select max(fct._loaded_at) from {{ this }} as fct)
+        -- Load time, not event time: yesterday's event that landed today is still new.
+        -- coalesce: on an empty table max() is null, and nothing would ever load
+        where _loaded_at > (
+            select coalesce(max(fct._loaded_at), '1900-01-01') from {{ this }} as fct
+        )
     {% endif %}
 )
 

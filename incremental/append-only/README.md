@@ -22,7 +22,7 @@ Rows never change once written: events, logs, readings, ledger entries.
 
 ## Gotchas
 
-- **Duplicate delivery.** Some loaders send the same event twice. The `unique` test on `event_id` will catch it, and adding `unique_key='event_id'` fixes it.
+- **Duplicate delivery.** Some loaders send the same event twice. The `unique` test on `event_id` will catch it. Adding `unique_key='event_id'` only half fixes it: copies of rows already in the table get replaced, but two copies in the same batch both get inserted, and the first build doesn't dedupe at all. If duplicates are common, dedupe in the model and use [merge on key](../merge-on-key/).
 - **`>` vs `>=`.** `>` can miss rows sharing the latest `_loaded_at` if a load was half finished when dbt ran. Easiest fix: run dbt after loads finish.
 - Rows already loaded keep the old logic until you `--full-refresh`.
 

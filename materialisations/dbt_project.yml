@@ -3,6 +3,9 @@
 
 models:
   shop_analytics:
+    # Only affects incremental models. The default, ignore, quietly leaves out new columns.
+    +on_schema_change: append_new_columns
+
     staging:
       +materialized: view
     intermediate:

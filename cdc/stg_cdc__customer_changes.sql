@@ -1,5 +1,6 @@
 -- Staging for a Debezium change stream, flattened with ExtractNewRecordState using
--- delete.handling.mode=rewrite and add.fields=op,lsn,source.ts_ms.
+-- delete.tombstone.handling.mode=rewrite (delete.handling.mode=rewrite before Debezium 2.5)
+-- and add.fields=op,lsn,source.ts_ms.
 -- One row per change. The CDC patterns handle ordering and duplicates.
 -- replace: source, key and column names (and the metadata fields if you're not on Debezium)
 

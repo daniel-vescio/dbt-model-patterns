@@ -24,8 +24,9 @@ You need history, and there's no reliable `updated_at`.
 ## Gotchas
 
 - Changes between runs collapse. A price that goes 10 → 12 → 10 between runs records nothing.
-- Adding a column to `check_cols` creates a new version for nearly every row on the next run.
+- A column the snapshot only started capturing later is null in older versions. Adding it to `check_cols` then creates a new version for nearly every row on the next run.
 - You can't get history back, so back up before renaming or moving the table.
+- `unique_key` must really be unique in the source. Duplicates corrupt the history for good, so put a `unique` test on the source column.
 
 ## Files
 

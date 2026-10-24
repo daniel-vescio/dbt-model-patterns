@@ -1,0 +1,8 @@
+models:
+  - name: dim_customers
+    description: Current state of each customer, rebuilt from the full change log. Deleted customers are left out.
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null

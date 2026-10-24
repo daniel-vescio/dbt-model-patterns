@@ -28,6 +28,8 @@ Before reaching for any incremental pattern, check whether a plain `table` is fa
 
 Each folder has a short README covering the problem, when to use it (and when not to), the decisions you'll need to make, and the gotchas. The `.sql` and `.yml` files next to it are the templates.
 
+[`incremental/`](incremental/), [`scd/`](scd/) and [`cdc/`](cdc/) also have an overview README with the rules that apply to every pattern in them.
+
 ## Conventions
 
 - The examples use an online shop: orders, payments, customers and app events. Lines to change are marked `replace`.
@@ -38,3 +40,7 @@ Each folder has a short README covering the problem, when to use it (and when no
 ## Maybe later
 
 Fact table types, dimensions and surrogate keys, combining data from multiple source systems, a date spine, project structure and config, and a testing strategy.
+
+## License
+
+MIT. See [LICENSE](LICENSE).

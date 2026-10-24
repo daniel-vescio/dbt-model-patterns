@@ -27,6 +27,7 @@ You have a CDC stream and need history ("what tier was this customer on 3 March?
 - **Keep the raw change log.** Rebuilding a customer reads all their events, so pruning the log truncates their history.
 - Updates to columns you don't model still create a version with the same values. Collapse them with `lag()` if that bothers you.
 - Two changes in the same millisecond give a zero-length version. It's correct, just a bit surprising.
+- **History starts when the log does.** A customer's first version starts at their first event, often the initial `r` snapshot, so facts older than that match no version. If the first version should cover everything before it, set its `valid_from` to `'1900-01-01'`.
 
 ## Files
 

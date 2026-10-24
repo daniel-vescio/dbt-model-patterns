@@ -28,6 +28,8 @@ The patterns read from a staging model (`stg_cdc__customer_changes.sql`) with on
 
 The staging template maps Debezium's fields to these names. Other tools call them something different, but the ideas are the same.
 
+`_stg_cdc__models.yml` tests it. `_op` only accepts `c`, `u`, `d` and `r`: the patterns treat anything that isn't `d` as a live row, so an unexpected value should fail there first.
+
 ## Things that apply to all of them
 
 - **Order by log position, not timestamp.** Two changes can share a timestamp. The log position (LSN, binlog position, SCN) gives the real order.
