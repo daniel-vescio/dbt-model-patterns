@@ -1,0 +1,8 @@
+models:
+  - name: fct_daily_revenue
+    description: Revenue per order date. The last few days get recomputed every run.
+    columns:
+      - name: order_date
+        data_tests:
+          - unique
+          - not_null

@@ -1,0 +1,16 @@
+models:
+  - name: dim_customers_history
+    description: >
+      One row per version of each customer, from CDC events.
+      Current state: where is_current and not is_deleted.
+    data_tests:
+      # One current version per customer
+      - unique:
+          column_name: customer_id
+          config:
+            where: "is_current"
+    columns:
+      - name: customer_version_id
+        data_tests:
+          - unique
+          - not_null

@@ -1,0 +1,15 @@
+# History using the source's updated_at.
+# replace: source, key and column names
+
+snapshots:
+  - name: snap_shop__customers
+    relation: source('shop', 'customers')
+    config:
+      schema: snapshots
+      unique_key: customer_id
+      strategy: timestamp
+      updated_at: updated_at
+      # Close the current version when a customer disappears from the source
+      hard_deletes: invalidate
+      # Far-future end date for current rows instead of null (match updated_at's type)
+      dbt_valid_to_current: "'9999-12-31'::timestamp"

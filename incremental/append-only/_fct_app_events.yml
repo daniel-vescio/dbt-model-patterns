@@ -1,0 +1,9 @@
+models:
+  - name: fct_app_events
+    description: One row per app event. Rows are never updated.
+    columns:
+      - name: event_id
+        description: Fails if the same event gets delivered twice.
+        data_tests:
+          - unique
+          - not_null

@@ -1,0 +1,18 @@
+models:
+  # Staging: warn so you can see duplicates arriving without failing the run.
+  # In your project, put this in the staging model's own properties file.
+  - name: stg_shop__payments
+    columns:
+      - name: payment_id
+        data_tests:
+          - unique:
+              config:
+                severity: warn
+
+  # Output: must be unique
+  - name: int_payments__deduplicated
+    columns:
+      - name: payment_id
+        data_tests:
+          - unique
+          - not_null

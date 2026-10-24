@@ -1,0 +1,17 @@
+# Snippet: defaults by folder, so most models need no config.
+# replace: shop_analytics with your project name, and the folders with yours
+
+models:
+  shop_analytics:
+    staging:
+      +materialized: view
+    intermediate:
+      +materialized: view
+    marts:
+      +materialized: table
+
+      # A big incremental table, protected from accidental --full-refresh
+      finance:
+        fct_ledger_entries:
+          +materialized: incremental
+          +full_refresh: false

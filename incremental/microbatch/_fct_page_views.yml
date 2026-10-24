@@ -1,0 +1,14 @@
+models:
+  # Upstream model: event_time lets dbt filter it to each batch.
+  # In your project, put this in the upstream model's own properties file.
+  - name: stg_app__events
+    config:
+      event_time: occurred_at
+
+  - name: fct_page_views
+    description: One row per page view, built in daily batches.
+    columns:
+      - name: event_id
+        data_tests:
+          - unique
+          - not_null

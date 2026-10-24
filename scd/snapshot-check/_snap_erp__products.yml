@@ -1,0 +1,12 @@
+# History by comparing values, for sources without a reliable updated_at.
+# replace: source, key and the columns you need history for
+
+snapshots:
+  - name: snap_erp__products
+    relation: source('erp', 'products')
+    config:
+      schema: snapshots
+      unique_key: product_id
+      strategy: check
+      check_cols: [product_name, category, list_price]
+      hard_deletes: invalidate

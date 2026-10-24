@@ -1,0 +1,43 @@
+models:
+  - name: dim_customers
+    description: Current state of each customer from CDC. Deleted customers have is_deleted = true.
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+
+unit_tests:
+  # These check the rows the model returns for one batch (what gets merged), not the final table.
+
+  - name: dim_customers_newest_event_in_batch_wins
+    model: dim_customers
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: ref('stg_cdc__customer_changes')
+        rows:
+          - {customer_id: 2, customer_tier: standard, _op: c, _source_lsn: 150, _loaded_at: "2026-01-02 10:00:00"}
+          - {customer_id: 2, customer_tier: premium, _op: u, _source_lsn: 160, _loaded_at: "2026-01-02 10:00:00"}
+      - input: this
+        rows:
+          - {customer_id: 1, customer_tier: premium, _source_lsn: 100, _loaded_at: "2026-01-02 09:00:00"}
+    expect:
+      rows:
+        - {customer_id: 2, customer_tier: premium, _source_lsn: 160}
+
+  - name: dim_customers_late_event_is_ignored
+    model: dim_customers
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: ref('stg_cdc__customer_changes')
+        rows:
+          - {customer_id: 1, customer_tier: standard, _op: u, _source_lsn: 90, _loaded_at: "2026-01-02 10:00:00"}
+      - input: this
+        rows:
+          - {customer_id: 1, customer_tier: premium, _source_lsn: 100, _loaded_at: "2026-01-02 09:00:00"}
+    expect:
+      rows: []

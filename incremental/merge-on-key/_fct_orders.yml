@@ -1,0 +1,8 @@
+models:
+  - name: fct_orders
+    description: Latest version of each order.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
